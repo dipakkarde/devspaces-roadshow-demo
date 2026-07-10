@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Spaces Roadshow</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 50px; background-color: #f5f5f5; }
+        .card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-block; max-width: 500px; }
+        h1 { color: #cc0000; } /* Red Hat Red */
+        .btn { background: #0066cc; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <!-- LAB TASK: Attendees will change this exact text string in Lab 1 -->
+        <h1>Welcome to the Legacy App</h1> 
+        <p>This environment is currently running inside an isolated container pod on OpenShift.</p>
+        <button class="btn" onclick="checkBackend()">Test API Connection</button>
+        <p id="api-result" style="margin-top:20px; font-weight:bold; color:#333;"></p>
+    </div>
+
+    <script>
+        function checkBackend() {
+            fetch('/api/status')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('api-result').innerText = `Backend Status: ${data.status} via ${data.environment}`;
+                })
+                .catch(err => {
+                    document.getElementById('api-result').innerText = "Error connecting to backend!";
+                });
+        }
+    </script>
+</body>
+</html>
