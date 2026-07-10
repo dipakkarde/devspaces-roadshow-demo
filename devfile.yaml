@@ -1,0 +1,49 @@
+schemaVersion: 2.2.0
+metadata:
+  name: devspaces-roadshow-demo
+  version: 1.0.0
+  displayName: OpenShift Dev Spaces Roadshow Lab
+  description: Multi-service Node.js stack with pre-configured hot reloading and automatic port exposure.
+  tags: ["Node.js", "Express", "Roadshow"]
+
+components:
+  # The central workspace tooling container
+  - name: udi-runtime
+    container:
+      image: registry.redhat.io/devspaces/udi-rhel9:latest
+      memoryLimit: 2Gi
+      mountSources: true
+      endpoints:
+        - name: http-3000
+          targetPort: 8080
+          exposure: public
+          protocol: http
+          attributes:
+            discoverable: "true"
+            urlRewriteSupported: "true"
+
+commands:
+  # 1. Automatic Onboarding: Installs application dependencies cleanly on start
+  - id: npm-install
+    exec:
+      component: udi-runtime
+      commandLine: "npm install"
+      workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: build
+        isDefault: true
+
+  # 2. Live Coding Command: Launches Nodemon to dynamically watch for changes
+  - id: run-dev
+    exec:
+      component: udi-runtime
+      commandLine: "npm run dev"
+      workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: run
+        isDefault: true
+
+events:
+  # Instructs Dev Spaces to run npm install automatically before handing control to the developer
+  postStart:
+    - npm-install
